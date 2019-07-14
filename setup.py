@@ -3,13 +3,13 @@ from distutils.core import setup
 setup(
     name='kiss_cache',
     packages=['kiss_cache'],
-    version='0.5',
+    version='0.5.1',
     license='MIT',
     description='"Keep It Simple Stupid" Cache',
     author='Bergutov Ruslan',
     author_email='ruslanbergutov@gmail.com',
     url='https://github.com/HiveTraum/kiss_cache',
-    # download_url='https://github.com/user/reponame/archive/v_01.tar.gz',  # I explain this later on
+    download_url='https://github.com/HiveTraum/kiss_cache/archive/0.5.tar.gz',
     keywords=['cache', 'memoize', 'kiss'],
     install_requires=[],
     classifiers=[
