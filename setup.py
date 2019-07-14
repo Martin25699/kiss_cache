@@ -1,8 +1,8 @@
-from distutils.core import setup
+from setuptools import find_packages, setup
 
 setup(
     name='kiss_cache',
-    packages=['kiss_cache'],
+    packages=find_packages(),
     version='0.5.1',
     license='MIT',
     description='"Keep It Simple Stupid" Cache',
