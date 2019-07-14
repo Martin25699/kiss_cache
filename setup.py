@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 setup(
     name='kiss_cache',
     packages=find_packages(),
-    version='0.5.1',
+    version='0.5.2',
     license='MIT',
     description='"Keep It Simple Stupid" Cache',
     author='Bergutov Ruslan',
