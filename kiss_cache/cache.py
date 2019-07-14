@@ -3,7 +3,7 @@ import inspect
 import logging
 from typing import NewType, Callable, Tuple, Any, Dict, Optional, List
 
-from stores.in_memory import InMemoryStore
+from kiss_cache.stores.in_memory import InMemoryStore
 
 logger = logging.getLogger(__name__)
 
