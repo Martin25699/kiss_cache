@@ -9,7 +9,7 @@ setup(
     author='Bergutov Ruslan',
     author_email='ruslanbergutov@gmail.com',
     url='https://github.com/HiveTraum/kiss_cache',
-    download_url='https://github.com/HiveTraum/kiss_cache/archive/0.5.tar.gz',
+    download_url='https://github.com/HiveTraum/kiss_cache/archive/0.5.2.tar.gz',
     keywords=['cache', 'memoize', 'kiss'],
     install_requires=[],
     classifiers=[
