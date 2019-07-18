@@ -3,6 +3,7 @@ import inspect
 import logging
 from typing import NewType, Callable, Tuple, Any, Dict, Optional, List
 
+from kiss_cache import local
 from kiss_cache.stores.in_memory import InMemoryStore
 
 logger = logging.getLogger(__name__)
@@ -10,14 +11,10 @@ logger = logging.getLogger(__name__)
 DEFAULT_EXPIRATION_TIMEOUT = 60 * 10
 
 KeyExtractor = NewType('KeyExtractor', Callable[[Tuple[Any, ...], Dict[str, Any], Callable[[Any], Any]], Any])
-HashExtractor = NewType('HashExtractor', Callable[[str], str])
 
 
 def default_key_extractor(func: Callable[[Any], str], *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> str:
-    return str(args) + str(kwargs) + inspect.getsource(func)
-
-
-def default_hash_extractor(key: str) -> str:
+    key = str(args) + str(kwargs) + inspect.getsource(func)
     m = hashlib.md5()
     m.update(key.encode("utf-8"))
     return m.hexdigest()
@@ -26,11 +23,9 @@ def default_hash_extractor(key: str) -> str:
 class Cache:
 
     def __init__(self, store=None,
-                 key_extractor: KeyExtractor = default_key_extractor,
-                 hash_extractor: HashExtractor = default_hash_extractor):
+                 key_extractor: KeyExtractor = default_key_extractor):
         self.store = store or InMemoryStore()
         self.key_extractor = key_extractor
-        self.hash_extractor = hash_extractor
 
     def get(self, key):
         return self.store.get(key)
@@ -53,12 +48,11 @@ class Cache:
 
                 try:
                     key = self.key_extractor(func, *args, **kwargs_for_key)
-                    key = self.hash_extractor(key=key)
                 except Exception as e:
                     logger.exception(e)
                     return func(*args, **kwargs)
 
-                if flush is False:
+                if flush is False and local.flush is False:
                     value = self.get(key=key)
                 else:
                     value = None

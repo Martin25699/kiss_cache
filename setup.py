@@ -3,13 +3,13 @@ from setuptools import find_packages, setup
 setup(
     name='kiss_cache',
     packages=find_packages(),
-    version='0.5.2',
+    version='0.5.3',
     license='MIT',
     description='"Keep It Simple Stupid" Cache',
     author='Bergutov Ruslan',
     author_email='ruslanbergutov@gmail.com',
     url='https://github.com/HiveTraum/kiss_cache',
-    download_url='https://github.com/HiveTraum/kiss_cache/archive/0.5.2.tar.gz',
+    download_url='https://github.com/HiveTraum/kiss_cache/archive/0.5.3.tar.gz',
     keywords=['cache', 'memoize', 'kiss'],
     install_requires=[],
     classifiers=[
