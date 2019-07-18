@@ -1,10 +1,13 @@
 import hashlib
 import inspect
 import logging
+import threading
 from typing import NewType, Callable, Tuple, Any, Dict, Optional, List
 
-from kiss_cache import local
 from kiss_cache.stores.in_memory import InMemoryStore
+
+local = threading.local()
+local.flush = False
 
 logger = logging.getLogger(__name__)
 
