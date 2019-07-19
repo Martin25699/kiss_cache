@@ -1,5 +1,4 @@
-import hashlib
-import inspect
+import base64
 import logging
 import threading
 from typing import NewType, Callable, Tuple, Any, Dict, Optional, List
@@ -17,10 +16,12 @@ KeyExtractor = NewType('KeyExtractor', Callable[[Tuple[Any, ...], Dict[str, Any]
 
 
 def default_key_extractor(func: Callable[[Any], str], *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> str:
-    key = str(args) + str(kwargs) + inspect.getsource(func)
-    m = hashlib.md5()
-    m.update(key.encode("utf-8"))
-    return m.hexdigest()
+    key = str(args) + str(kwargs) + func.__module__ + "." + func.__name__
+    key = key.encode()
+    key = base64.b64encode(key)
+    if len(key) > 32:
+        key = key[:32]
+    return key
 
 
 class Cache:
@@ -64,7 +65,10 @@ class Cache:
                     return value
 
                 value = func(*args, **kwargs)
-                self.set(key=key, value=value, expire=expire)
+
+                if value is not None:
+                    self.set(key=key, value=value, expire=expire)
+
                 return value
 
             return memoized_func
