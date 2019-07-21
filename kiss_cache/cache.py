@@ -56,7 +56,9 @@ class Cache:
                     logger.exception(e)
                     return func(*args, **kwargs)
 
-                if flush is False and local.flush is False:
+                flush: bool = flush and getattr(local, "flush", False)
+
+                if flush is False:
                     value = self.get(key=key)
                 else:
                     value = None
