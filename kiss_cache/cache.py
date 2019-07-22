@@ -16,11 +16,9 @@ KeyExtractor = NewType('KeyExtractor', Callable[[Tuple[Any, ...], Dict[str, Any]
 
 
 def default_key_extractor(func: Callable[[Any], str], *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> str:
-    key = str(args) + str(kwargs) + func.__module__ + "." + func.__name__
+    key = func.__module__ + "." + func.__name__ + "." + str(args) + str(kwargs)
     key = key.encode()
     key = base64.b64encode(key)
-    if len(key) > 32:
-        key = key[:32]
     return key
 
 
