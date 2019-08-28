@@ -22,6 +22,10 @@ def default_key_extractor(func: Callable[[Any], str], *args: Tuple[Any, ...], **
     return key
 
 
+def _extended_result(value: Any, is_from_cache: bool, extended_result: bool = False):
+    return [value, {"is_from_cache": is_from_cache}] if extended_result else value
+
+
 class Cache:
 
     def __init__(self, store=None,
@@ -35,13 +39,14 @@ class Cache:
     def set(self, key, value, expire=DEFAULT_EXPIRATION_TIMEOUT):
         return self.store.set(key, value, expire)
 
-    def memoize(self, expire=DEFAULT_EXPIRATION_TIMEOUT, excluded_keys: Optional[List[str]] = None):
+    def memoize(self, expire=DEFAULT_EXPIRATION_TIMEOUT, excluded_keys: Optional[List[str]] = None,
+                extended_result: bool = False):
 
         if excluded_keys is None:
             excluded_keys = []
 
         def decorator(func):
-            def memoized_func(*args, flush: bool = False, **kwargs):
+            def memoized_func(*args, flush: bool = False, **kwargs) -> Tuple[Any, bool]:
 
                 if excluded_keys:
                     kwargs_for_key = {k: v for k, v in kwargs.items() if k not in excluded_keys}
@@ -52,7 +57,7 @@ class Cache:
                     key = self.key_extractor(func, *args, **kwargs_for_key)
                 except Exception as e:
                     logger.exception(e)
-                    return func(*args, **kwargs)
+                    return _extended_result(func(*args, **kwargs), False, extended_result=extended_result)
 
                 flush: bool = flush and getattr(local, "flush", False)
 
@@ -62,14 +67,14 @@ class Cache:
                     value = None
 
                 if value is not None:
-                    return value
+                    return _extended_result(value, True, extended_result=extended_result)
 
                 value = func(*args, **kwargs)
 
                 if value is not None:
                     self.set(key=key, value=value, expire=expire)
 
-                return value
+                return _extended_result(value, False, extended_result=extended_result)
 
             return memoized_func
 
