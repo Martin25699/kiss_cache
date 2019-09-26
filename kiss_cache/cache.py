@@ -59,7 +59,7 @@ class Cache:
                     logger.exception(e)
                     return _extended_result(func(*args, **kwargs), False, extended_result=extended_result)
 
-                flush: bool = flush and getattr(local, "flush", False)
+                flush: bool = flush or getattr(local, "flush", False)
 
                 if flush is False:
                     value = self.get(key=key)
