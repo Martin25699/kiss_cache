@@ -1,5 +1,6 @@
 import logging
 from typing import Callable, Any
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +24,16 @@ class DjangoCacheStore:
         except ImportError:
             raise ImportError('Django required for this cache store')
 
+        self.prefix = str(uuid4())
         self.cache = caches[cache_identifier]
         self.serialize = serialize
         self.deserialize = deserialize
 
+    def _key_prefix_combine(self, k: str) -> str:
+        return f'{self.prefix}:{k}'
+
     def get(self, key):
+        key = self._key_prefix_combine(key)
 
         try:
             value = self.cache.get(key)
@@ -42,6 +48,8 @@ class DjangoCacheStore:
             return None
 
     def set(self, key, value, expire):
+        key = self._key_prefix_combine(key)
+
         try:
             value = self.serialize(value)
             return self.cache.set(key, value, expire)
